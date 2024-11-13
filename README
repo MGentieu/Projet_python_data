@@ -1,0 +1,34 @@
+1. **ID** : Identifiant unique de chaque candidat.
+2. **Gender** : Sexe du candidat, soit "m" (homme) ou "f" (femme).
+3. **DOB** : Date de naissance du candidat (format YYYY-MM-DD).
+4. **10percentage** : Pourcentage obtenu par le candidat en 10ème année (équivalent du brevet en France).
+5. **10board** : Type de conseil éducatif pour l'examen de 10ème année (ex : CBSE, ICSE, conseils d'état).
+6. **12graduation** : Année d'obtention du diplôme de 12ème année (équivalent du baccalauréat).
+7. **12percentage** : Pourcentage obtenu en 12ème année.
+8. **12board** : Type de conseil éducatif pour l'examen de 12ème année.
+9. **CollegeID** : Identifiant de l'établissement d'enseignement supérieur fréquenté.
+10. **CollegeTier** : Classement du collège (1 étant le plus élevé).
+11. **Degree** : Diplôme obtenu (ex : B.Tech/B.E., M.Tech/M.E.).
+12. **Specialization** : Spécialisation ou domaine d'étude (ex : informatique, ingénierie mécanique).
+13. **collegeGPA** : Moyenne GPA du candidat durant les études supérieures.
+14. **CollegeCityID** : Identifiant de la ville du collège.
+15. **CollegeCityTier** : Classement de la ville du collège (1 étant le plus élevé).
+16. **CollegeState** : État où se trouve le collège.
+17. **GraduationYear** : Année de fin d'études du candidat.
+18. **English** : Score d'anglais du candidat.
+19. **Logical** : Score en logique.
+20. **Quant** : Score en raisonnement quantitatif.
+21. **Domain** : Score dans le domaine spécifique de spécialisation.
+22. **ComputerProgramming** : Score en programmation informatique.
+23. **ElectronicsAndSemicon** : Score en électronique et semi-conducteurs.
+24. **ComputerScience** : Score en sciences informatiques.
+25. **MechanicalEngg** : Score en ingénierie mécanique.
+26. **ElectricalEngg** : Score en ingénierie électrique.
+27. **TelecomEngg** : Score en ingénierie des télécommunications.
+28. **CivilEngg** : Score en ingénierie civile.
+29. **conscientiousness** : Score de conscience (personnalité).
+30. **agreeableness** : Score de gentillesse (personnalité).
+31. **extraversion** : Score d'extraversion (personnalité).
+32. **neuroticism** : Score de névrosisme (personnalité).
+33. **openess_to_experience** : Score d'ouverture à l'expérience (personnalité).
+34. **Salary** : Salaire proposé au candidat (en monnaie locale).
