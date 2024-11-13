@@ -71,7 +71,6 @@ axes[1].legend()
 plt.tight_layout()
 
 ##################  Distribution des salaires (densité)  ##################
-
 # Création de la figure avec un sous-graphe pour les salaires
 plt.figure(figsize=(8, 6))
 
@@ -88,5 +87,23 @@ plt.title("Distribution des salaires par sexe")
 plt.xlabel("Salaire")
 plt.ylabel("Densité")
 plt.legend()
+plt.tight_layout()
+
+##################  salaires supérieurs à 1 million  ##################
+df_filtered = df[df['Salary'] > 1000000]
+
+# Créer un graphique des salaires par genre avec le nombre de personnes
+plt.figure(figsize=(8, 6))
+
+# Tracer un countplot avec le salaire sur l'axe des X et le nombre de personnes sur l'axe des Y
+sb.countplot(x='Salary', hue='Gender', data=df_filtered, palette='Set2', dodge=True)
+plt.xticks(rotation=45)  # Incliner les labels des abscisses de 45 degrés
+
+# Paramètres du graphique
+plt.title("Nombre de personnes avec un salaire supérieur à 1 million par genre")
+plt.xlabel("Salaire")
+plt.ylabel("Nombre de personnes")
+
+# Affichage du graphique
 plt.tight_layout()
 plt.show()
