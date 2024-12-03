@@ -2,14 +2,92 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sb
+import seaborn as sns
 
 # Chargement des données
 df=pd.read_csv("Engineering_graduate_salary.csv")
 
+
+def affichage_graph_reussite():
+    # Prédictions sur l'ensemble de test
+    y_test_pred = model.predict(X_test_scaled)
+
+    # Graphique 1: Prédictions vs Réels
+    plt.figure(figsize=(8, 6))
+    plt.scatter(y_test, y_test_pred, color='blue', alpha=0.5)
+    plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red', linestyle='--')  # Ligne d'identité
+    plt.title('Prédictions vs Valeurs réelles')
+    plt.xlabel('Valeurs réelles')
+    plt.ylabel('Prédictions')
+    plt.show()
+
+    # Graphique 2: Résidus
+    residuals = y_test - y_test_pred
+    plt.figure(figsize=(8, 6))
+    sns.scatterplot(x=y_test_pred, y=residuals)
+    plt.axhline(0, color='red', linestyle='--')
+    plt.title('Graphique des résidus')
+    plt.xlabel('Prédictions')
+    plt.ylabel('Résidus')
+    plt.show()
+
+    # Graphique 3: Histogramme des résidus
+    plt.figure(figsize=(8, 6))
+    sns.histplot(residuals, kde=True, color='blue', bins=30)
+    plt.title('Histogramme des résidus')
+    plt.xlabel('Résidus')
+    plt.ylabel('Fréquence')
+    plt.show()
+
+
+def affichage_pourcentage_reussite():
+    from sklearn.metrics import mean_absolute_error
+
+    # Calcul du R²
+    train_r2 = r2_score(y_train, y_train_pred)
+    test_r2 = r2_score(y_test, y_test_pred)
+
+    # Affichage des performances
+    print(f"Performances sur l'ensemble d'entraînement :")
+    print(f"  - RMSE : {train_rmse:.2f}")
+    print(f"  - R²   : {train_r2:.2f}")
+    print(f"  - Pourcentage de réussite sur l'entraînement (R²) : {train_r2 * 100:.2f}%")
+
+    print(f"\nPerformances sur l'ensemble de test :")
+    print(f"  - RMSE : {test_rmse:.2f}")
+    print(f"  - R²   : {test_r2:.2f}")
+    print(f"  - Pourcentage de réussite sur le test (R²) : {test_r2 * 100:.2f}%")
+
+    # Calcul de l'Erreur Absolue Moyenne (MAE) et du pourcentage de réussite
+    train_mae = mean_absolute_error(y_train, y_train_pred)
+    test_mae = mean_absolute_error(y_test, y_test_pred)
+
+    # Affichage des MAE
+    print(f"\nErreur absolue moyenne sur l'entraînement : {train_mae:.2f}")
+    print(f"Erreur absolue moyenne sur le test : {test_mae:.2f}")
+
 #######################################2. Nettoyage#################################################################
 
 # Nettoyage des données (à compléter selon vos besoins)
+df = df[df['collegeGPA']>20]
+#df = df[df['GraduationYear'] >= 1950]
+#df['GraduationYear'] = df['GraduationYear'].astype(int)
+df = df.drop(columns=['CollegeCityID'])
+df['DOB'] = pd.to_datetime(df['DOB'], errors='coerce')
+df['YearOfBirth'] = df['DOB'].dt.year
+
+df['12board_category'] = df['12board'].apply(lambda x: 'CBSE' if 'cbse' in str(x)
+                                              else 'state board' if 'state' in str(x)
+                                              else 'Autres')
+
+# Calculer la moyenne des salaires
+mean_salary = df['Salary'].mean()
+# Remplacer les salaires supérieurs à 1 500 000 par la moyenne
+df['Salary'] = df['Salary'].apply(lambda x: mean_salary if x > 1500000 else x)
+# Vérifier les résultats
+print(df['Salary'].describe())
+
+
 
 #######################################3. Analyse#################################################################
 """
@@ -117,11 +195,12 @@ from sklearn.preprocessing import StandardScaler
 
 
 # Supposons que vous souhaitiez prédire le salaire avec les autres colonnes comme caractéristiques
-X = df.drop(columns=['Salary', 'DOB', 'openess_to_experience', 'nueroticism', 'extraversion', 'agreeableness', 'conscientiousness', 'CollegeID', '10board', '12board', 'CollegeState'])  # Caractéristiques (features), en excluant la colonne cible
+X = df.drop(columns=['Salary', 'DOB', 'openess_to_experience', 'nueroticism', 'extraversion', 'agreeableness', 'conscientiousness', 'CollegeID', '10board', '12board', 'CollegeState', 'YearOfBirth'])  # Caractéristiques (features), en excluant la colonne cible
 y = df['Salary']  # Variable cible (target)
 
 # Diviser les données en ensemble d'entraînement et de test (80% entraînement, 20% test)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
 
 print("Ensemble d'entraînement :", X_train.shape)
 print("Ensemble de test :", X_test.shape)
@@ -170,3 +249,9 @@ print(f"  - R²   : {train_r2:.2f}")
 print(f"\nPerformances sur l'ensemble de test :")
 print(f"  - RMSE : {test_rmse:.2f}")
 print(f"  - R²   : {test_r2:.2f}")
+
+
+affichage_graph_reussite()
+#affichage_pourcentage_reussite()
+
+
