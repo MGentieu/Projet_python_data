@@ -117,7 +117,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 # Supposons que vous souhaitiez prédire le salaire avec les autres colonnes comme caractéristiques
-X = df.drop(columns=['Salary', 'DOB', 'openess_to_experience', 'nueroticism', 'extraversion', 'agreeableness', 'conscientiousness', 'CollegeID', '10board', '12board', 'CollegeState', 'Degree', 'Specialization', 'Gender'])  # Caractéristiques (features), en excluant la colonne cible
+X = df.drop(columns=['Salary', 'DOB', 'openess_to_experience', 'nueroticism', 'extraversion', 'agreeableness', 'conscientiousness', 'CollegeID', '10board', '12board', 'CollegeState'])  # Caractéristiques (features), en excluant la colonne cible
 y = df['Salary']  # Variable cible (target)
 
 # Diviser les données en ensemble d'entraînement et de test (80% entraînement, 20% test)
@@ -126,7 +126,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 print("Ensemble d'entraînement :", X_train.shape)
 print("Ensemble de test :", X_test.shape)
 
-"""
+
 # Identifier les colonnes catégoriques
 categorical_columns = X.select_dtypes(include=['object']).columns
 # OneHotEncoding pour les colonnes catégoriques
@@ -134,14 +134,12 @@ preprocessor = ColumnTransformer(transformers=[('cat', OneHotEncoder(drop='first
 
 X_train_encoded = preprocessor.fit_transform(X_train)
 X_test_encoded = preprocessor.transform(X_test)
-X_train_dense = X_train_encoded.toarray()  # Convertir en matrice dense
-X_test_dense = X_test_encoded.toarray()"""
 
 
 # Standardiser les données (calculer la moyenne et l'écart-type pour chaque colonne, puis transformer les données)
 scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
+X_train_scaled = scaler.fit_transform(X_train_encoded)
+X_test_scaled = scaler.transform(X_test_encoded)
 
 
 #######################################4. Entraienemnt#################################################################
