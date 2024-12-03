@@ -80,12 +80,8 @@ df['12board_category'] = df['12board'].apply(lambda x: 'CBSE' if 'cbse' in str(x
                                               else 'state board' if 'state' in str(x)
                                               else 'Autres')
 
-# Calculer la moyenne des salaires
 mean_salary = df['Salary'].mean()
-# Remplacer les salaires supérieurs à 1 500 000 par la moyenne
 df['Salary'] = df['Salary'].apply(lambda x: mean_salary if x > 1500000 else x)
-# Vérifier les résultats
-print(df['Salary'].describe())
 
 
 
