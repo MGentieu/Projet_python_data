@@ -1,14 +1,12 @@
-# Projet Python pour data sciences
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Chargement des données
-df=pd.read_csv("Engineering_graduate_salary.csv")
+df=pd.read_csv("kc_house_data.csv")
 
 
-def affichage_graph_reussite():
+def affichage_graph_reussite(X_test_scaled):
     # Prédictions sur l'ensemble de test
     y_test_pred = model.predict(X_test_scaled)
 
@@ -65,138 +63,19 @@ def affichage_pourcentage_reussite():
     print(f"\nErreur absolue moyenne sur l'entraînement : {train_mae:.2f}")
     print(f"Erreur absolue moyenne sur le test : {test_mae:.2f}")
 
+def estimation_prix_maison(nouvelle_maison, model, preprocessor):
+    # Convertir le dictionnaire en DataFrame
+    nouvelle_maison_df = pd.DataFrame([nouvelle_maison])
 
-def predire_salaire(new_employee):
-    # Créer un DataFrame avec les données saisies
+    # Appliquer le préprocesseur sur la nouvelle maison
+    nouvelle_maison_encoded = preprocessor.transform(nouvelle_maison_df)
 
-    new_data_df = pd.DataFrame(new_employee)
-
-    # Appliquer le même prétraitement que pour X_train
-    new_data_encoded = preprocessor.transform(new_data_df)  # Encodage
-    new_data_scaled = scaler.transform(new_data_encoded)  # Mise à l'échelle
-
-    # Faire la prédiction
-    predicted_salary = model.predict(new_data_scaled)
-
-    # Afficher le salaire prédit
-    print(f"\nLe salaire prédit pour cette personne est : {predicted_salary[0]:.2f} INR")
+    prix_estime = model.predict(nouvelle_maison_encoded)
+    return prix_estime[0]
 
 #######################################2. Nettoyage#################################################################
-"""
-# Nettoyage des données (à compléter selon vos besoins)
-df = df[df['collegeGPA']>20]
-#df = df[df['GraduationYear'] >= 1950]
-#df['GraduationYear'] = df['GraduationYear'].astype(int)
-df = df.drop(columns=['CollegeCityID'])
-df['DOB'] = pd.to_datetime(df['DOB'], errors='coerce')
-df['YearOfBirth'] = df['DOB'].dt.year
-
-df['12board_category'] = df['12board'].apply(lambda x: 'CBSE' if 'cbse' in str(x)
-                                              else 'state board' if 'state' in str(x)
-                                              else 'Autres')
-"""
-mean_salary = df['Salary'].mean()
-df['Salary'] = df['Salary'].apply(lambda x: mean_salary if x > 1500000 else x)
-
-
 
 #######################################3. Analyse#################################################################
-"""
-plt.figure(figsize=(8, 8))
-df['Gender'].value_counts().plot(kind='pie', autopct='%1.1f%%', startangle=140, colors=['orange', 'green'])
-plt.title("Répartition des Genres")
-plt.ylabel("")  # Enlever l'étiquette de l'axe y pour un meilleur affichage
-
-
-##################  Distribution des scores (valeurs) ##################
-# Création de la figure avec deux sous-graphiques
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
-
-# Graphe pour les scores du brevet (10ème année)
-sb.scatterplot(data=df, x='10percentage', y='ID', hue='Gender', style='Gender', ax=axes[0])
-axes[0].set_title("Distribution des scores de 10ème année (brevet)")
-axes[0].set_xlabel("Score en 10ème année (%)")
-axes[0].set_ylabel("Nombre de candidats")
-
-# Graphe pour les scores du bac (12ème année)
-sb.scatterplot(data=df, x='12percentage', y='ID', hue='Gender', style='Gender', ax=axes[1])
-axes[1].set_title("Distribution des scores de 12ème année (bac)")
-axes[1].set_xlabel("Score en 12ème année (%)")
-axes[1].set_ylabel("Nombre de candidats")
-
-# Affichage de la légende et des graphes
-plt.legend(title="Sexe", loc="upper right")
-plt.tight_layout()
-
-
-##################  Distribution des scores (densité)  ##################
-# Création de la figure avec deux sous-graphiques
-fig, axes = plt.subplots(1, 2, figsize=(16, 6))
-
-# Préparation des données pour les scores de 10ème année
-score_10_m = df[df['Gender'] == 'm']['10percentage']
-score_10_f = df[df['Gender'] == 'f']['10percentage']
-
-# Créer des lignes de densité pour les scores de 10ème année
-sb.kdeplot(score_10_m, label='Hommes', ax=axes[0], color='blue')
-sb.kdeplot(score_10_f, label='Femmes', ax=axes[0], color='pink')
-axes[0].set_title("Distribution des scores en 10ème année (brevet)")
-axes[0].set_xlabel("Score en 10ème année (%)")
-axes[0].set_ylabel("Densité")
-axes[0].legend()
-
-# Préparation des données pour les scores de 12ème année
-score_12_m = df[df['Gender'] == 'm']['12percentage']
-score_12_f = df[df['Gender'] == 'f']['12percentage']
-
-# Créer des lignes de densité pour les scores de 12ème année
-sb.kdeplot(score_12_m, label='Hommes', ax=axes[1], color='blue')
-sb.kdeplot(score_12_f, label='Femmes', ax=axes[1], color='pink')
-axes[1].set_title("Distribution des scores en 12ème année (bac)")
-axes[1].set_xlabel("Score en 12ème année (%)")
-axes[1].set_ylabel("Densité")
-axes[1].legend()
-
-plt.tight_layout()
-
-##################  Distribution des salaires (densité)  ##################
-# Création de la figure avec un sous-graphe pour les salaires
-plt.figure(figsize=(8, 6))
-
-# Création des courbes de densité pour les salaires
-salary_m = df[df['Gender'] == 'm']['Salary']
-salary_f = df[df['Gender'] == 'f']['Salary']
-
-# Tracer les lignes de densité pour les salaires
-sb.kdeplot(salary_m, label='Hommes', color='blue')
-sb.kdeplot(salary_f, label='Femmes', color='pink')
-
-# Paramètres du graphique
-plt.title("Distribution des salaires par sexe")
-plt.xlabel("Salaire")
-plt.ylabel("Densité")
-plt.legend()
-plt.tight_layout()
-
-##################  salaires supérieurs à 1 million  ##################
-df_filtered = df[df['Salary'] > 1000000]
-
-# Créer un graphique des salaires par genre avec le nombre de personnes
-plt.figure(figsize=(8, 6))
-
-# Tracer un countplot avec le salaire sur l'axe des X et le nombre de personnes sur l'axe des Y
-sb.countplot(x='Salary', hue='Gender', data=df_filtered, palette='Set2', dodge=True)
-plt.xticks(rotation=45)  # Incliner les labels des abscisses de 45 degrés
-
-# Paramètres du graphique
-plt.title("Nombre de personnes avec un salaire supérieur à 1 million par genre")
-plt.xlabel("Salaire")
-plt.ylabel("Nombre de personnes")
-
-# Affichage du graphique
-plt.tight_layout()
-plt.show()"""
-
 
 #######################################4. Analyse#################################################################
 from sklearn.model_selection import train_test_split
@@ -205,14 +84,13 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler
 
 
-# Supposons que vous souhaitiez prédire le salaire avec les autres colonnes comme caractéristiques
-X = df.drop(columns=['Salary', 'DOB', 'openess_to_experience', 'nueroticism', 'extraversion', 'agreeableness', 'conscientiousness', 'CollegeID', '10board', '12board', 'CollegeState'])  # Caractéristiques (features), en excluant la colonne cible
-#X = df.loc[:, ['Degree', 'Specialization', '12percentage']]
-y = df['Salary']  # Variable cible (target)
+X = df.drop(columns=['id', 'price', 'date', 'lat', 'long'])  # Caractéristiques (features), en excluant la colonne cible
+y = df['price']  # Variable cible (target)
 
 y_bins = pd.qcut(y, q=4, labels=False)
+
 # Diviser les données en ensemble d'entraînement et de test (80% entraînement, 20% test)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y_bins)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=None, stratify=y_bins)
 
 
 print("Ensemble d'entraînement :", X_train.shape)
@@ -221,17 +99,18 @@ print("Ensemble de test :", X_test.shape)
 
 # Identifier les colonnes catégoriques
 categorical_columns = X.select_dtypes(include=['object']).columns
+numerical_columns = X.select_dtypes(include=['int64', 'float64']).columns
 # OneHotEncoding pour les colonnes catégoriques
-preprocessor = ColumnTransformer(transformers=[('cat', OneHotEncoder(drop='first', handle_unknown='ignore'), categorical_columns)], remainder='passthrough')
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('cat', OneHotEncoder(drop='first', handle_unknown='ignore'), categorical_columns),
+        ('num', StandardScaler(), numerical_columns)
+    ],
+    remainder='passthrough'
+)
 
 X_train_encoded = preprocessor.fit_transform(X_train)
 X_test_encoded = preprocessor.transform(X_test)
-
-
-# Standardiser les données (calculer la moyenne et l'écart-type pour chaque colonne, puis transformer les données)
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train_encoded)
-X_test_scaled = scaler.transform(X_test_encoded)
 
 
 #######################################5. Entraienemnt#################################################################
@@ -242,17 +121,17 @@ from sklearn.metrics import mean_squared_error, r2_score
 model = LinearRegression()
 
 # Entraîner le modèle sur les données d'entraînement
-model.fit(X_train_scaled, y_train)
+model.fit(X_train_encoded, y_train)
 
 # Prédire les valeurs sur l'ensemble d'entraînement et de test
-y_train_pred = model.predict(X_train_scaled)
-y_test_pred = model.predict(X_test_scaled)
+y_train_pred = model.predict(X_train_encoded)
+y_test_pred = model.predict(X_test_encoded)
 
 # Évaluer les performances du modèle
-train_rmse = mean_squared_error(y_train, y_train_pred, squared=False)  # RMSE sur train
-test_rmse = mean_squared_error(y_test, y_test_pred, squared=False)  # RMSE sur test
-train_r2 = r2_score(y_train, y_train_pred)  # R² sur train
-test_r2 = r2_score(y_test, y_test_pred)  # R² sur test
+train_rmse = mean_squared_error(y_train, y_train_pred, squared=False)
+test_rmse = mean_squared_error(y_test, y_test_pred, squared=False)
+train_r2 = r2_score(y_train, y_train_pred)
+test_r2 = r2_score(y_test, y_test_pred)
 
 # Afficher les métriques de performance
 print(f"Performances sur l'ensemble d'entraînement :")
@@ -264,38 +143,33 @@ print(f"  - RMSE : {test_rmse:.2f}")
 print(f"  - R²   : {test_r2:.2f}")
 
 
-affichage_graph_reussite()
+affichage_graph_reussite(X_test_encoded)
 #affichage_pourcentage_reussite()
 
 
 
+nouvelle_maison = {
+    "bedrooms": 3,
+    "bathrooms": 1,
+    "sqft_living": 1180,
+    "sqft_lot": 5650,
+    "floors": 1,
+    "waterfront": 0,
+    "view": 0,
+    "condition": 3,
+    "grade": 7,
+    "sqft_above": 1180,
+    "sqft_basement": 0,
+    "yr_built": 1955,
+    "yr_renovated": 0,
+    "zipcode": "98178",
+    "lat": 47.5112,
+    "long": -122.257,
+    "sqft_living15": 1340,
+    "sqft_lot15": 5650
+}#prix attendu 221900
 
 
-
-new_employee = {
-        "ID": [604399],
-        "Gender": ["f"],
-        "10percentage": [87.8],
-        "12graduation": [2009],
-        "12percentage": [84.0],
-        "CollegeTier": [1],
-        "Degree": ["B.Tech/B.E."],
-        "Specialization": ["instrumentation and control engineering"],
-        "collegeGPA": [73.82],
-        "CollegeCityID": [6920],
-        "CollegeCityTier": [1],
-        "GraduationYear": [2013],
-        "English": [650],
-        "Logical": [665],
-        "Quant": [810],
-        "Domain": [0.694479327708463],
-        "ComputerProgramming": [485],
-        "ElectronicsAndSemicon": [366],
-        "ComputerScience": [-1],
-        "MechanicalEngg": [-1],
-        "ElectricalEngg": [-1],
-        "TelecomEngg": [-1],
-        "CivilEngg": [-1]
-    }
-# Appeler la fonction pour demander les informations et faire la prédiction
-predire_salaire(new_employee)
+# Estimation du prix
+prix_estime = estimation_prix_maison(nouvelle_maison, model, preprocessor)
+print(f"Le prix estimé de la maison est : ${prix_estime:,.2f} pour $221,900")

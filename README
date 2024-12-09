@@ -1,34 +1,21 @@
-1. **ID** : Identifiant unique de chaque candidat.
-2. **Gender** : Sexe du candidat, soit "m" (homme) ou "f" (femme).
-3. **DOB** : Date de naissance du candidat (format YYYY-MM-DD).
-4. **10percentage** : Pourcentage obtenu par le candidat en 10ème année (équivalent du brevet en France).
-5. **10board** : Type de conseil éducatif pour l'examen de 10ème année (ex : CBSE, ICSE, conseils d'état).
-6. **12graduation** : Année d'obtention du diplôme de 12ème année (équivalent du baccalauréat).
-7. **12percentage** : Pourcentage obtenu en 12ème année.
-8. **12board** : Type de conseil éducatif pour l'examen de 12ème année.
-9. **CollegeID** : Identifiant de l'établissement d'enseignement supérieur fréquenté.
-10. **CollegeTier** : Classement du collège (1 étant le plus élevé).
-11. **Degree** : Diplôme obtenu (ex : B.Tech/B.E., M.Tech/M.E.).
-12. **Specialization** : Spécialisation ou domaine d'étude (ex : informatique, ingénierie mécanique).
-13. **collegeGPA** : Moyenne GPA du candidat durant les études supérieures.
-14. **CollegeCityID** : Identifiant de la ville du collège.
-15. **CollegeCityTier** : Classement de la ville du collège (1 étant le plus élevé).
-16. **CollegeState** : État où se trouve le collège.
-17. **GraduationYear** : Année de fin d'études du candidat.
-18. **English** : Score d'anglais du candidat.
-19. **Logical** : Score en logique.
-20. **Quant** : Score en raisonnement quantitatif.
-21. **Domain** : Score dans le domaine spécifique de spécialisation.
-22. **ComputerProgramming** : Score en programmation informatique.
-23. **ElectronicsAndSemicon** : Score en électronique et semi-conducteurs.
-24. **ComputerScience** : Score en sciences informatiques.
-25. **MechanicalEngg** : Score en ingénierie mécanique.
-26. **ElectricalEngg** : Score en ingénierie électrique.
-27. **TelecomEngg** : Score en ingénierie des télécommunications.
-28. **CivilEngg** : Score en ingénierie civile.
-29. **conscientiousness** : Score de conscience (personnalité).
-30. **agreeableness** : Score de gentillesse (personnalité).
-31. **extraversion** : Score d'extraversion (personnalité).
-32. **neuroticism** : Score de névrosisme (personnalité).
-33. **openess_to_experience** : Score d'ouverture à l'expérience (personnalité).
-34. **Salary** : Salaire proposé au candidat (en monnaie locale).
+1. **ID** : Identifiant unique de chaque maison (par exemple, `7129300520`).
+2. **Date** : Date de la vente de la maison (par exemple, `"20141013T000000"` pour le 13 octobre 2014).
+3. **Price** : Prix de la maison (par exemple, `221900` dollars).
+4. **Bedrooms** : Nombre de chambres dans la maison (par exemple, `3`).
+5. **Bathrooms** : Nombre de salles de bain dans la maison (par exemple, `1`).
+6. **Sqft_living** : Superficie habitable de la maison en pieds carrés (par exemple, `1180` pieds carrés).
+7. **Sqft_lot** : Superficie du terrain en pieds carrés (par exemple, `5650` pieds carrés).
+8. **Floors** : Nombre d'étages dans la maison (par exemple, `"1"` étage).
+9. **Waterfront** : Indique si la maison est au bord de l'eau (`1` pour oui, `0` pour non).
+10. **View** : Qualité de la vue (valeur de 0 à 4, où 0 signifie aucune vue et 4 représente une vue de haute qualité).
+11. **Condition** : Condition générale de la maison (valeur de 1 à 5, où 1 est la moins bonne condition et 5 la meilleure).
+12. **Grade** : Qualité de la construction de la maison, évaluée de 1 à 13 (par exemple, `7` indique un bon standard de construction).
+13. **Sqft_above** : Superficie habitable au-dessus du sol en pieds carrés (par exemple, `1180` pieds carrés).
+14. **Sqft_basement** : Superficie du sous-sol en pieds carrés (par exemple, `0` indique qu'il n'y a pas de sous-sol).
+15. **Year_built** : Année de construction de la maison (par exemple, `1955`).
+16. **Year_renovated** : Année de rénovation de la maison (si applicable, sinon 0).
+17. **Zipcode** : Code postal de la maison (par exemple, `"98178"`).
+18. **Latitude** : Latitude de la maison (par exemple, `47.5112`).
+19. **Longitude** : Longitude de la maison (par exemple, `-122.257`).
+20. **Sqft_living15** : Superficie habitable moyenne des 15 maisons les plus proches (en pieds carrés).
+21. **Sqft_lot15** : Superficie du terrain moyenne des 15 maisons les plus proches (en pieds carrés).
