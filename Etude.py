@@ -63,33 +63,15 @@ def affichage_pourcentage_reussite():
     print(f"\nErreur absolue moyenne sur l'entraînement : {train_mae:.2f}")
     print(f"Erreur absolue moyenne sur le test : {test_mae:.2f}")
 
-
-import numpy as np
-
-
 def estimation_prix_maison(nouvelle_maison, model, preprocessor):
-    """
-    Estime le prix d'une maison en fonction des caractéristiques données,
-    à l'aide du modèle d'apprentissage automatique et du préprocesseur.
-
-    Args:
-    - nouvelle_maison (dict): Dictionnaire des caractéristiques de la maison.
-    - model (sklearn model): Modèle de régression linéaire entraîné.
-    - preprocessor (sklearn ColumnTransformer): Préprocesseur pour transformer les données avant de faire la prédiction.
-
-    Returns:
-    - float: Prix estimé de la maison.
-    """
     # Convertir le dictionnaire en DataFrame
     nouvelle_maison_df = pd.DataFrame([nouvelle_maison])
 
     # Appliquer le préprocesseur sur la nouvelle maison
     nouvelle_maison_encoded = preprocessor.transform(nouvelle_maison_df)
 
-    # Prédire le prix avec le modèle
     prix_estime = model.predict(nouvelle_maison_encoded)
-
-    return prix_estime[0]  # Retourner le prix estimé sous forme de float
+    return prix_estime[0]
 
 #######################################2. Nettoyage#################################################################
 
@@ -102,7 +84,6 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler
 
 
-# Supposons que vous souhaitiez prédire le salaire avec les autres colonnes comme caractéristiques
 X = df.drop(columns=['id', 'price', 'date', 'lat', 'long'])  # Caractéristiques (features), en excluant la colonne cible
 y = df['price']  # Variable cible (target)
 
