@@ -39,7 +39,6 @@ def affichage_graph_reussite():
     plt.ylabel('Fréquence')
     plt.show()
 
-
 def affichage_pourcentage_reussite():
     from sklearn.metrics import mean_absolute_error
 
@@ -66,8 +65,24 @@ def affichage_pourcentage_reussite():
     print(f"\nErreur absolue moyenne sur l'entraînement : {train_mae:.2f}")
     print(f"Erreur absolue moyenne sur le test : {test_mae:.2f}")
 
-#######################################2. Nettoyage#################################################################
 
+def predire_salaire(new_employee):
+    # Créer un DataFrame avec les données saisies
+
+    new_data_df = pd.DataFrame(new_employee)
+
+    # Appliquer le même prétraitement que pour X_train
+    new_data_encoded = preprocessor.transform(new_data_df)  # Encodage
+    new_data_scaled = scaler.transform(new_data_encoded)  # Mise à l'échelle
+
+    # Faire la prédiction
+    predicted_salary = model.predict(new_data_scaled)
+
+    # Afficher le salaire prédit
+    print(f"\nLe salaire prédit pour cette personne est : {predicted_salary[0]:.2f} INR")
+
+#######################################2. Nettoyage#################################################################
+"""
 # Nettoyage des données (à compléter selon vos besoins)
 df = df[df['collegeGPA']>20]
 #df = df[df['GraduationYear'] >= 1950]
@@ -79,7 +94,7 @@ df['YearOfBirth'] = df['DOB'].dt.year
 df['12board_category'] = df['12board'].apply(lambda x: 'CBSE' if 'cbse' in str(x)
                                               else 'state board' if 'state' in str(x)
                                               else 'Autres')
-
+"""
 mean_salary = df['Salary'].mean()
 df['Salary'] = df['Salary'].apply(lambda x: mean_salary if x > 1500000 else x)
 
@@ -191,11 +206,13 @@ from sklearn.preprocessing import StandardScaler
 
 
 # Supposons que vous souhaitiez prédire le salaire avec les autres colonnes comme caractéristiques
-X = df.drop(columns=['Salary', 'DOB', 'openess_to_experience', 'nueroticism', 'extraversion', 'agreeableness', 'conscientiousness', 'CollegeID', '10board', '12board', 'CollegeState', 'YearOfBirth'])  # Caractéristiques (features), en excluant la colonne cible
+X = df.drop(columns=['Salary', 'DOB', 'openess_to_experience', 'nueroticism', 'extraversion', 'agreeableness', 'conscientiousness', 'CollegeID', '10board', '12board', 'CollegeState'])  # Caractéristiques (features), en excluant la colonne cible
+#X = df.loc[:, ['Degree', 'Specialization', '12percentage']]
 y = df['Salary']  # Variable cible (target)
 
+y_bins = pd.qcut(y, q=4, labels=False)
 # Diviser les données en ensemble d'entraînement et de test (80% entraînement, 20% test)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y_bins)
 
 
 print("Ensemble d'entraînement :", X_train.shape)
@@ -217,7 +234,7 @@ X_train_scaled = scaler.fit_transform(X_train_encoded)
 X_test_scaled = scaler.transform(X_test_encoded)
 
 
-#######################################4. Entraienemnt#################################################################
+#######################################5. Entraienemnt#################################################################
 
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
@@ -251,3 +268,34 @@ affichage_graph_reussite()
 #affichage_pourcentage_reussite()
 
 
+
+
+
+
+new_employee = {
+        "ID": [604399],
+        "Gender": ["f"],
+        "10percentage": [87.8],
+        "12graduation": [2009],
+        "12percentage": [84.0],
+        "CollegeTier": [1],
+        "Degree": ["B.Tech/B.E."],
+        "Specialization": ["instrumentation and control engineering"],
+        "collegeGPA": [73.82],
+        "CollegeCityID": [6920],
+        "CollegeCityTier": [1],
+        "GraduationYear": [2013],
+        "English": [650],
+        "Logical": [665],
+        "Quant": [810],
+        "Domain": [0.694479327708463],
+        "ComputerProgramming": [485],
+        "ElectronicsAndSemicon": [366],
+        "ComputerScience": [-1],
+        "MechanicalEngg": [-1],
+        "ElectricalEngg": [-1],
+        "TelecomEngg": [-1],
+        "CivilEngg": [-1]
+    }
+# Appeler la fonction pour demander les informations et faire la prédiction
+predire_salaire(new_employee)
