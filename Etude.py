@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 # Chargement des données
 df=pd.read_csv("kc_house_data.csv")
@@ -37,31 +38,18 @@ def affichage_graph_reussite(X_test_scaled):
     plt.ylabel('Fréquence')
     plt.show()
 
-def affichage_pourcentage_reussite():
-    from sklearn.metrics import mean_absolute_error
+def pourcentage_reussite(y_test, y_test_pred, seuil=0.05):
+    # Calculer la différence relative entre les valeurs réelles et prédites
+    differences = np.abs(y_test - y_test_pred) / y_test
+    # Calculer le pourcentage de prédictions qui sont inférieures au seuil
+    correct_predictions = (differences < seuil).sum()
+    total_predictions = len(y_test)
+    pourcentage = (correct_predictions / total_predictions) * 100
 
-    # Calcul du R²
-    train_r2 = r2_score(y_train, y_train_pred)
-    test_r2 = r2_score(y_test, y_test_pred)
+    print(f"Pourcentage de réussite (valeurs proches à 5%) : {pourcentage:.2f}%")
 
-    # Affichage des performances
-    print(f"Performances sur l'ensemble d'entraînement :")
-    print(f"  - RMSE : {train_rmse:.2f}")
-    print(f"  - R²   : {train_r2:.2f}")
-    print(f"  - Pourcentage de réussite sur l'entraînement (R²) : {train_r2 * 100:.2f}%")
 
-    print(f"\nPerformances sur l'ensemble de test :")
-    print(f"  - RMSE : {test_rmse:.2f}")
-    print(f"  - R²   : {test_r2:.2f}")
-    print(f"  - Pourcentage de réussite sur le test (R²) : {test_r2 * 100:.2f}%")
 
-    # Calcul de l'Erreur Absolue Moyenne (MAE) et du pourcentage de réussite
-    train_mae = mean_absolute_error(y_train, y_train_pred)
-    test_mae = mean_absolute_error(y_test, y_test_pred)
-
-    # Affichage des MAE
-    print(f"\nErreur absolue moyenne sur l'entraînement : {train_mae:.2f}")
-    print(f"Erreur absolue moyenne sur le test : {test_mae:.2f}")
 
 def estimation_prix_maison(nouvelle_maison, model, preprocessor):
     # Convertir le dictionnaire en DataFrame
@@ -88,10 +76,8 @@ X = df.drop(columns=['id', 'price', 'date', 'lat', 'long'])  # Caractéristiques
 y = df['price']  # Variable cible (target)
 
 y_bins = pd.qcut(y, q=4, labels=False)
-
 # Diviser les données en ensemble d'entraînement et de test (80% entraînement, 20% test)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=None, stratify=y_bins)
-
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y_bins)
 
 print("Ensemble d'entraînement :", X_train.shape)
 print("Ensemble de test :", X_test.shape)
@@ -117,33 +103,32 @@ X_test_encoded = preprocessor.transform(X_test)
 
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
-# Initialiser le modèle de régression linéaire
+
 model = LinearRegression()
 
-# Entraîner le modèle sur les données d'entraînement
-model.fit(X_train_encoded, y_train)
+def entrainement_model (model):
+    model.fit(X_train_encoded, y_train)
 
-# Prédire les valeurs sur l'ensemble d'entraînement et de test
-y_train_pred = model.predict(X_train_encoded)
-y_test_pred = model.predict(X_test_encoded)
+    # Prédire les valeurs sur l'ensemble d'entraînement et de test
+    y_train_pred = model.predict(X_train_encoded)
+    y_test_pred = model.predict(X_test_encoded)
 
-# Évaluer les performances du modèle
-train_rmse = mean_squared_error(y_train, y_train_pred, squared=False)
-test_rmse = mean_squared_error(y_test, y_test_pred, squared=False)
-train_r2 = r2_score(y_train, y_train_pred)
-test_r2 = r2_score(y_test, y_test_pred)
+    # Évaluer les performances du modèle
+    train_rmse = mean_squared_error(y_train, y_train_pred, squared=False)
+    test_rmse = mean_squared_error(y_test, y_test_pred, squared=False)
+    train_r2 = r2_score(y_train, y_train_pred)
+    test_r2 = r2_score(y_test, y_test_pred)
 
-# Afficher les métriques de performance
-print(f"Performances sur l'ensemble d'entraînement :")
-print(f"  - RMSE : {train_rmse:.2f}")
-print(f"  - R²   : {train_r2:.2f}")
+    # Afficher les métriques de performance
+    print(f"Performances avec {model.__class__.__name__} :")
+    print(f"  - RMSE entraînement : {train_rmse:.2f}")
+    print(f"  - R² entraînement   : {train_r2:.2f}")
+    print(f"  - RMSE test         : {test_rmse:.2f}")
+    print(f"  - R² test           : {test_r2:.2f}")
+    pourcentage_reussite(y_test, y_test_pred, seuil=0.05)
 
-print(f"\nPerformances sur l'ensemble de test :")
-print(f"  - RMSE : {test_rmse:.2f}")
-print(f"  - R²   : {test_r2:.2f}")
-
-
-affichage_graph_reussite(X_test_encoded)
+entrainement_model(model)
+#affichage_graph_reussite(X_test_encoded)
 #affichage_pourcentage_reussite()
 
 
