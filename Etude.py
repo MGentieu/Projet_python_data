@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 
-# Chargement des données
 df=pd.read_csv("kc_house_data.csv")
 
 def entrainement_model (model):
@@ -116,19 +115,14 @@ X_train_encoded = preprocessor.fit_transform(X_train)
 X_test_encoded = preprocessor.transform(X_test)
 
 
-#######################################5. Entraienemnt#################################################################
-
+#######################################5. Entraienemnt regression lineaire#################################################################
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 
 model = LinearRegression()
-
-
-
 entrainement_model(model)
-#affichage_graph_reussite(X_test_encoded)
-#affichage_pourcentage_reussite()
 
+#affichage_graph_reussite(X_test_encoded)
 
 
 nouvelle_maison = {
@@ -151,7 +145,6 @@ nouvelle_maison = {
     "sqft_living15": 1340,
     "sqft_lot15": 5650
 }#prix attendu 221900
-
 
 # Estimation du prix
 prix_estime = estimation_prix_maison(nouvelle_maison, model, preprocessor)
