@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Chargement des données
-df=pd.read_csv("Engineering_graduate_salary.csv")
+df=pd.read_csv("C:/Users/nicol/Documents/GitHub/Projet_python_data/Engineering_graduate_salary.csv")
 
 
 def affichage_graph_reussite():
