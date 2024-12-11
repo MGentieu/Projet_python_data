@@ -119,13 +119,13 @@ X_test_encoded = preprocessor.transform(X_test)
 #######################################5. Entraienemnt regression lineaire#################################################################
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
-"""
+
 model = LinearRegression()
 entrainement_model(model)
 
 from sklearn.ensemble import RandomForestRegressor
 model_rf = RandomForestRegressor(n_estimators=100, random_state=42)
-entrainement_model(model_rf)"""
+entrainement_model(model_rf)
 
 from xgboost import XGBRegressor
 model_xgb = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
