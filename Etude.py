@@ -1,3 +1,5 @@
+import pickle
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -117,10 +119,10 @@ X_test_encoded = preprocessor.transform(X_test)
 #######################################5. Entraienemnt regression lineaire#################################################################
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
-
+"""
 model = LinearRegression()
 entrainement_model(model)
-"""
+
 from sklearn.ensemble import RandomForestRegressor
 model_rf = RandomForestRegressor(n_estimators=100, random_state=42)
 entrainement_model(model_rf)"""
@@ -142,6 +144,10 @@ from sklearn.neural_network import MLPRegressor
 model_mlp = MLPRegressor(hidden_layer_sizes=(100,), max_iter=1000, random_state=42)
 entrainement_model(model_mlp)"""
 
+with open("model.pkl", "wb") as file:
+    pickle.dump(model_xgb, file)
+with open("preprocessor.pkl", "wb") as file:
+    pickle.dump(preprocessor, file)
 #affichage_graph_reussite(X_test_encoded)
 
 #######################################7. Clustering#################################################################
@@ -192,7 +198,7 @@ plt.xlabel('Nombre de clusters')
 plt.ylabel('Inertie')
 plt.show()
 
-#######################################8. #################################################################
+#######################################8. Prédiction et Déploiement du Modèle#################################################################
 
 nouvelle_maison = {
     "bedrooms": 3,
@@ -216,5 +222,7 @@ nouvelle_maison = {
 }#prix attendu 221900
 
 # Estimation du prix
-prix_estime = estimation_prix_maison(nouvelle_maison, model, preprocessor)
+prix_estime = estimation_prix_maison(nouvelle_maison, model_xgb, preprocessor)
 print(f"Le prix estimé de la maison est : ${prix_estime:,.2f} pour $221,900")
+
+
