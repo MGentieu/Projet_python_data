@@ -1,3 +1,4 @@
+import pickle
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -24,7 +25,7 @@ def entrainement_model (model):
     print(f"  - R² entraînement   : {train_r2:.2f}")
     print(f"  - RMSE test         : {test_rmse:.2f}")
     print(f"  - R² test           : {test_r2:.2f}")
-    pourcentage_reussite(y_test, y_test_pred, seuil=0.05)
+    pourcentage_reussite(y_test, y_test_pred, seuil=0.2)
 
 def affichage_graph_reussite(X_test_scaled):
     # Prédictions sur l'ensemble de test
@@ -57,7 +58,7 @@ def affichage_graph_reussite(X_test_scaled):
     plt.ylabel('Fréquence')
     plt.show()
 
-def pourcentage_reussite(y_test, y_test_pred, seuil=0.05):
+def pourcentage_reussite(y_test, y_test_pred, seuil):
     # Calculer la différence relative entre les valeurs réelles et prédites
     differences = np.abs(y_test - y_test_pred) / y_test
     # Calculer le pourcentage de prédictions qui sont inférieures au seuil
@@ -65,7 +66,7 @@ def pourcentage_reussite(y_test, y_test_pred, seuil=0.05):
     total_predictions = len(y_test)
     pourcentage = (correct_predictions / total_predictions) * 100
 
-    print(f"Pourcentage de réussite (valeurs proches à 5%) : {pourcentage:.2f}%")
+    print(f"Pourcentage de réussite (valeurs proches à {seuil*100}%) : {pourcentage:.2f}%")
 
 def estimation_prix_maison(nouvelle_maison, model, preprocessor):
     # Convertir le dictionnaire en DataFrame
@@ -86,7 +87,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler
-
 
 X = df.drop(columns=['id', 'price', 'date', 'lat', 'long'])  # Caractéristiques (features), en excluant la colonne cible
 y = df['price']  # Variable cible (target)
@@ -130,6 +130,7 @@ from xgboost import XGBRegressor
 model_xgb = XGBRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
 entrainement_model(model_xgb)
 
+"""
 from sklearn.neighbors import KNeighborsRegressor
 model_knn = KNeighborsRegressor(n_neighbors=5)
 entrainement_model(model_knn)
@@ -140,10 +141,63 @@ entrainement_model(model_en)
 
 from sklearn.neural_network import MLPRegressor
 model_mlp = MLPRegressor(hidden_layer_sizes=(100,), max_iter=1000, random_state=42)
-entrainement_model(model_mlp)
+entrainement_model(model_mlp)"""
 
+with open("model.pkl", "wb") as file:
+    pickle.dump(model_xgb, file)
+with open("preprocessor.pkl", "wb") as file:
+    pickle.dump(preprocessor, file)
 #affichage_graph_reussite(X_test_encoded)
 
+#######################################7. Clustering#################################################################
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Appliquer l'algorithme K-means
+kmeans = KMeans(n_clusters=2, random_state=42)  # Vous pouvez ajuster n_clusters
+kmeans.fit(X_scaled)
+
+# Récupérer les clusters (labels)
+clusters = kmeans.labels_
+
+# Ajouter les clusters comme nouvelle colonne au DataFrame
+df['Cluster'] = clusters
+
+# Visualisation des clusters
+# Réduction de la dimensionnalité à 2D pour une visualisation (PCA)
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+# Créer le graphique des clusters
+plt.figure(figsize=(8,6))
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c=clusters, cmap='viridis', s=50)
+plt.title('Visualisation des Clusters (K-means)', fontsize=14)
+plt.xlabel('Composante Principale 1', fontsize=12)
+plt.ylabel('Composante Principale 2', fontsize=12)
+plt.colorbar(label='Cluster')
+plt.show()
+
+# Afficher les centres des clusters
+print("Centres des clusters :")
+print(kmeans.cluster_centers_)
+
+# Méthode du coude pour déterminer le nombre optimal de clusters
+inertia = []
+for i in range(1, 11):
+    kmeans = KMeans(n_clusters=i, random_state=42)
+    kmeans.fit(X_scaled)
+    inertia.append(kmeans.inertia_)
+
+# Tracer l'inertie en fonction du nombre de clusters
+plt.plot(range(1, 11), inertia, marker='o')
+plt.title('Méthode du Coude')
+plt.xlabel('Nombre de clusters')
+plt.ylabel('Inertie')
+plt.show()
+
+#######################################8. Prédiction et Déploiement du Modèle#################################################################
 
 nouvelle_maison = {
     "bedrooms": 3,
@@ -167,5 +221,7 @@ nouvelle_maison = {
 }#prix attendu 221900
 
 # Estimation du prix
-prix_estime = estimation_prix_maison(nouvelle_maison, model, preprocessor)
+prix_estime = estimation_prix_maison(nouvelle_maison, model_xgb, preprocessor)
 print(f"Le prix estimé de la maison est : ${prix_estime:,.2f} pour $221,900")
+
+
