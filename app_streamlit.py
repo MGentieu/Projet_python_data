@@ -2,27 +2,6 @@ import pandas as pd
 import streamlit as st
 import pickle
 
-#pip install streamlit
-"""import os
-os.system("streamlit run app_streamlit.py")
-"""
-"""
-from pyngrok import ngrok
-import subprocess
-import time
-
-# Démarrer Streamlit en arrière-plan
-process = subprocess.Popen(["streamlit", "run", "app_streamlit.py"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-# Lancer un tunnel avec ngrok
-public_url = ngrok.connect(port=8501)
-print(f"Streamlit app running at: {public_url}")
-
-time.sleep(10)
-
-process.terminate()
-"""
-
-
 # Charger le modèle sauvegardé et le préprocesseur
 with open("model.pkl", "rb") as file:
     model = pickle.load(file)
