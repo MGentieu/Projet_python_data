@@ -3,9 +3,20 @@ import streamlit as st
 import numpy as np
 import pickle
 
-# Charger le modèle pré-entrainé
-# Remplacez cette ligne par le chargement de votre propre modèle sauvegardé
-# Exemple : model = pickle.load(open('model.pkl', 'rb'))
+#pip install streamlit
+"""import os
+os.system("streamlit run app_streamlit.py")
+"""
+"""from pyngrok import ngrok
+import subprocess
+# Démarrer Streamlit en arrière-plan
+process = subprocess.Popen(["streamlit", "run", "app_streamlit.py"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+# Lancer un tunnel avec ngrok
+public_url = ngrok.connect(port=8501)
+print(f"Streamlit app running at: {public_url}")
+"""
+#process.terminate()
+
 
 # Charger le modèle sauvegardé
 with open("model.pkl", "rb") as file:
